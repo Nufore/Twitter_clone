@@ -35,6 +35,3 @@ class User(Base):
 
     def is_following(self, user):
         return self.followed.filter(followers.c.followed_id == user.id).count() > 0
-
-
-

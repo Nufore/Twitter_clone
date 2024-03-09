@@ -5,7 +5,6 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.future import select
-from sqlalchemy.orm import joinedload
 
 from database import Base, engine, session
 from models import User
@@ -37,21 +36,12 @@ async def create_users():
             ]
         )
         await session.commit()
+    return {"message": "users created!"}
 
 
 @app.get("/", response_class=HTMLResponse)
 async def main_page(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
-
-
-# @app.get("/api/users/{nickname}")
-# async def get_users(request: Request, nickname: str):
-#     return {"message": f"hello, {nickname}"}
-
-
-# @app.get("/login")
-# async def get_users(request: Request):
-#     return {"query": 123, "nickname": "test"}
 
 
 @app.get("/api/tweets")
