@@ -1,14 +1,18 @@
 from flask import Flask, render_template, request
 from database import Base, engine, session
-from models import User, Tweet, Like
+from models import User, Tweet, Like, Media
+from werkzeug.utils import secure_filename
 import os
 
 root_dir = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 
+
 template_folder = os.path.join(root_dir, "templates")
 static_directory = os.path.join(root_dir, "static")
+UPLOAD_FOLDER = os.path.join(root_dir, "static/images")
 
 app = Flask(__name__, template_folder=template_folder, static_folder=static_directory)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 @app.before_request
@@ -44,11 +48,35 @@ def post_tweets():
 
     new_tweet = Tweet(content=tweet_data, user_id=user.id)
     session.add(new_tweet)
+
+    for media_id in tweet_media_ids:
+        media_file = session.query(Media).filter(Media.id == media_id).one_or_none()
+        if media_file:
+            media_file.tweet_id = new_tweet.id
+
     session.commit()
 
     return {
         "result": True,
         "tweet_id": new_tweet.id
+    }
+
+
+@app.route("/api/medias", methods=["POST"])
+def post_media():
+    api_key = request.headers.get("Api-Key")
+
+    file = request.files['file']
+    filename = secure_filename(file.filename)
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+    new_media = Media(path=f"/static/images/{filename}")
+    session.add(new_media)
+    session.commit()
+
+    return {
+        "result": True,
+        "media_id": new_media.id
     }
 
 

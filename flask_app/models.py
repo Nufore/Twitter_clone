@@ -56,7 +56,7 @@ class Tweet(Base):
         return {
             "id": self.id,
             "content": self.content,
-            "attachments": [],
+            "attachments": [media.path for media in self.medias],
             "author": self.user.id_name_to_json(),
             "likes": [like.user.id_name_to_json() for like in self.likes]
         }
@@ -72,3 +72,14 @@ class Like(Base):
     tweet = relationship("Tweet", backref="likes")
 
     UniqueConstraint("user_id", "tweet_id", name="unique_like")
+
+
+class Media(Base):
+    __tablename__ = "medias"
+
+    id = Column(Integer, primary_key=True)
+    path = Column(String)
+
+    tweet_id = Column(Integer, ForeignKey("tweets.id"))
+    tweet = relationship("Tweet", backref="medias")
+
