@@ -5,7 +5,7 @@ psql -U admin
 \
 **alembic commands:**
 
-alembic upgrade head - создать миграцию
+alembic upgrade head - применить миграцию
 
 alembic downgrade -1 - откатить миграцию
 
