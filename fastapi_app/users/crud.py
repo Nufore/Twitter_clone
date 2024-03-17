@@ -42,3 +42,9 @@ async def delete_user(
 ) -> None:
     await session.delete(user)
     await session.commit()
+
+
+async def get_user_by_api_key(session: AsyncSession, api_key: str) -> User | None:
+    stmt = select(User).where(User.api_key == api_key)
+    user: User | None = await session.scalar(stmt)
+    return user

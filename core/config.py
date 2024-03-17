@@ -1,11 +1,16 @@
+from pydantic import BaseModel
 from pydantic_settings import BaseSettings
+
+
+class DbSettings(BaseModel):
+    url: str = "postgresql+asyncpg://admin:admin@localhost"
+    echo: bool = False
 
 
 class Settings(BaseSettings):
     api_prefix: str = "/api"
 
-    db_url: str = "postgresql+asyncpg://admin:admin@localhost"
-    db_echo: bool = True
+    db: DbSettings = DbSettings()
 
 
 settings = Settings()

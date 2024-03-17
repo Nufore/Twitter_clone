@@ -1,7 +1,8 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Table, Column, ForeignKey, Integer, Text
+from sqlalchemy import Table, Column, ForeignKey, Integer, Text, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship, backref
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from .base import Base
 
@@ -34,3 +35,21 @@ class User(Base):
     )
 
     tweets: Mapped[list["Tweet"]] = relationship(back_populates="user")
+
+    async def follow(self, user: "User", session: AsyncSession):
+        if not await self.is_followed(user=user, session=session):
+            self.followed.append(user)
+            await session.commit()
+
+    async def unfollow(self, user: "User", session: AsyncSession):
+        if await self.is_followed(user=user, session=session):
+            self.followed.remove(user)
+            await session.commit()
+
+    async def is_followed(self, user: "User", session: AsyncSession):
+        stmt = select(followers).filter(followers.c.follower_id == self.id, followers.c.followed_id == user.id)
+        result = await session.execute(stmt)
+        is_follow = result.scalars().all()
+        if is_follow:
+            return True
+        return False

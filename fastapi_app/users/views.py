@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import db_helper
@@ -55,3 +55,31 @@ async def delete_user(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     await crud.delete_user(session=session, user=user)
+
+
+@router.post("/{user_id}/follow", status_code=status.HTTP_201_CREATED)
+async def follow_user(
+    request: Request,
+    user: User = Depends(user_by_id),
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+    api_key = request.headers.get("Api-Key")
+    user_me = await crud.get_user_by_api_key(session=session, api_key=api_key)
+
+    await user_me.follow(user=user, session=session)
+
+    return {"result": True}
+
+
+@router.delete("/{user_id}/follow", status_code=status.HTTP_200_OK)
+async def unfollow_user(
+    request: Request,
+    user: User = Depends(user_by_id),
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+    api_key = request.headers.get("Api-Key")
+    user_me = await crud.get_user_by_api_key(session=session, api_key=api_key)
+
+    await user_me.unfollow(user=user, session=session)
+
+    return {"result": True}
