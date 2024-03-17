@@ -1,14 +1,19 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Table, Column, ForeignKey, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship, backref
 from typing import List
 from .base import Base
 
+if TYPE_CHECKING:
+    from .tweet import Tweet
+
 
 followers = Table(
-    'followers',
+    "followers",
     Base.metadata,
-    Column('follower_id', Integer, ForeignKey('users.id')),
-    Column('followed_id', Integer, ForeignKey('users.id'))
+    Column("follower_id", Integer, ForeignKey("users.id")),
+    Column("followed_id", Integer, ForeignKey("users.id")),
 )
 
 
@@ -24,6 +29,8 @@ class User(Base):
         secondary=followers,
         primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.followed_id == id),
-        backref=backref('followers', lazy='dynamic'),
-        lazy='dynamic',
+        backref=backref("followers", lazy="dynamic"),
+        lazy="dynamic",
     )
+
+    tweets: Mapped[list["Tweet"]] = relationship(back_populates="user")
