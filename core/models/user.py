@@ -8,6 +8,7 @@ from .base import Base
 
 if TYPE_CHECKING:
     from .tweet import Tweet
+    from .like import Like
 
 
 followers = Table(
@@ -35,6 +36,7 @@ class User(Base):
     )
 
     tweets: Mapped[list["Tweet"]] = relationship(back_populates="user")
+    likes: Mapped[list["Like"]] = relationship(back_populates="user")
 
     async def follow(self, user: "User", session: AsyncSession):
         if not await self.is_followed(user=user, session=session):
