@@ -3,12 +3,15 @@ __all__ = (
     "DatabaseHelper",
     "db_helper",
     "User",
+    "followers",
     "Tweet",
-    "Like"
+    "Like",
+    "Media",
 )
 
 from .base import Base
 from .db_helper import DatabaseHelper, db_helper
-from .user import User
+from .user import User, followers
 from .tweet import Tweet
 from .like import Like
+from .media import Media

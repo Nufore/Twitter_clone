@@ -1,7 +1,9 @@
 from fastapi import APIRouter, status, Depends, Request
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload, selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.models import db_helper
+from core.models import db_helper, User as User_
 from . import crud
 from .schemas import User, UserCreate, UserUpdate, UserUpdatePartial
 from .dependencies import user_by_id
@@ -22,11 +24,6 @@ async def create_user(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     return await crud.create_user(session=session, user_in=user_in)
-
-
-@router.get("/{user_id}", response_model=User)
-async def get_user(user: User = Depends(user_by_id)):
-    return user
 
 
 @router.put("/{user_id}")
@@ -60,26 +57,48 @@ async def delete_user(
 @router.post("/{user_id}/follow", status_code=status.HTTP_201_CREATED)
 async def follow_user(
     request: Request,
-    user: User = Depends(user_by_id),
+    user_to_follow: User = Depends(user_by_id),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     api_key = request.headers.get("Api-Key")
-    user_me = await crud.get_user_by_api_key(session=session, api_key=api_key)
 
-    await user_me.follow(user=user, session=session)
+    res = await crud.follow_user(
+        session=session, api_key=api_key, user_to_follow=user_to_follow
+    )
 
-    return {"result": True}
+    return {"result": res}
 
 
 @router.delete("/{user_id}/follow", status_code=status.HTTP_200_OK)
 async def unfollow_user(
     request: Request,
-    user: User = Depends(user_by_id),
+    user_to_unfollow: User = Depends(user_by_id),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     api_key = request.headers.get("Api-Key")
-    user_me = await crud.get_user_by_api_key(session=session, api_key=api_key)
 
-    await user_me.unfollow(user=user, session=session)
+    res = await crud.unfollow_user(
+        session=session, api_key=api_key, user_to_unfollow=user_to_unfollow
+    )
 
-    return {"result": True}
+    return {"result": res}
+
+
+@router.get("/me", status_code=status.HTTP_200_OK)
+async def get_user_me(
+    request: Request,
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+    api_key = request.headers.get("Api-Key")
+
+    res = await crud.get_user_data(session=session, api_key=api_key)
+    return res
+
+
+@router.get("/{user_id}", status_code=status.HTTP_200_OK)
+async def get_user(
+    user: User = Depends(user_by_id),
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+    res = await crud.get_user_data(session=session, user_id=user.id)
+    return res

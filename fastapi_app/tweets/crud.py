@@ -1,5 +1,6 @@
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload, selectinload, subqueryload
 
 from .schemas import TweetCreate
 from core.models import Tweet, Like
@@ -14,6 +15,27 @@ async def create_tweet(session: AsyncSession, tweet_in: TweetCreate):
 
 async def get_tweet(session: AsyncSession, tweet_id: int) -> Tweet | None:
     return await session.get(Tweet, tweet_id)
+
+
+async def get_tweets(session: AsyncSession, api_key: str) -> dict | None:
+
+    stmt = (
+        select(Tweet)
+        .options(
+            selectinload(Tweet.likes).subqueryload(Like.user),
+            selectinload(Tweet.user),
+        )
+        .order_by(-Tweet.id)
+    )
+    res = await session.scalars(stmt)
+
+    tweets = res.all()
+
+    data = {
+        "result": True,
+        "tweets": [tweet.to_json() for tweet in tweets],
+    }
+    return data
 
 
 async def delete_tweet(session: AsyncSession, tweet_id: int, user_id: int):

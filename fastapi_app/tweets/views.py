@@ -1,7 +1,10 @@
 from fastapi import APIRouter, status, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload, selectinload, subqueryload
 
-from core.models import db_helper
+from core.models import db_helper, Tweet as Tweet_, Like
+from core.config import settings
 from .dependencies import tweet_by_id
 from .schemas import Tweet, TweetCreate, TweetToResponse
 from . import crud
@@ -20,6 +23,17 @@ async def create_tweet(
     user = await users_crud.get_user_by_api_key(session=session, api_key=api_key)
     tweet_in.user_id = user.id
     return await crud.create_tweet(session=session, tweet_in=tweet_in)
+
+
+@router.get("/", status_code=status.HTTP_200_OK)
+async def get_tweets(
+    request: Request,
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+    api_key = request.headers.get("Api-Key")
+    res = await crud.get_tweets(session=session, api_key=api_key)
+
+    return res
 
 
 @router.delete("/{tweet_id}", status_code=status.HTTP_200_OK)

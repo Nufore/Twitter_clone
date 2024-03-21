@@ -25,10 +25,11 @@ class UserRelationMixin:
 class TweetRelationMixin:
     _tweet_primary_key: bool = False
     _tweet_back_populates: str | None = None
+    _nullable: bool | None = None
 
     @declared_attr
     def tweet_id(cls) -> Mapped[int]:
-        return mapped_column(ForeignKey("tweets.id"), primary_key=cls._tweet_primary_key)
+        return mapped_column(ForeignKey("tweets.id"), primary_key=cls._tweet_primary_key, nullable=cls._nullable)
 
     @declared_attr
     def tweet(cls) -> Mapped["Tweet"]:

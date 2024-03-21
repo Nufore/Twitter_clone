@@ -29,29 +29,20 @@ class User(Base):
     followed: Mapped[List["User"]] = relationship(
         "User",
         secondary=followers,
-        primaryjoin=(followers.c.follower_id == id),
-        secondaryjoin=(followers.c.followed_id == id),
-        backref=backref("followers", lazy="dynamic"),
-        lazy="dynamic",
+        primaryjoin=id == followers.c.follower_id,
+        secondaryjoin=id == followers.c.followed_id,
+        back_populates="followers",
+    )
+    followers: Mapped[List["User"]] = relationship(
+        "User",
+        secondary=followers,
+        primaryjoin=id == followers.c.followed_id,
+        secondaryjoin=id == followers.c.follower_id,
+        back_populates="followed",
     )
 
     tweets: Mapped[list["Tweet"]] = relationship(back_populates="user")
     likes: Mapped[list["Like"]] = relationship(back_populates="user")
 
-    async def follow(self, user: "User", session: AsyncSession):
-        if not await self.is_followed(user=user, session=session):
-            self.followed.append(user)
-            await session.commit()
-
-    async def unfollow(self, user: "User", session: AsyncSession):
-        if await self.is_followed(user=user, session=session):
-            self.followed.remove(user)
-            await session.commit()
-
-    async def is_followed(self, user: "User", session: AsyncSession):
-        stmt = select(followers).filter(followers.c.follower_id == self.id, followers.c.followed_id == user.id)
-        result = await session.execute(stmt)
-        is_follow = result.scalars().all()
-        if is_follow:
-            return True
-        return False
+    def id_name_to_json(self):
+        return {"id": self.id, "name": self.name}

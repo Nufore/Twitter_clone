@@ -22,13 +22,13 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(router=router_api, prefix=settings.api_prefix)
 
-# templates = Jinja2Templates(directory="../templates")
-# app.mount("/static", StaticFiles(directory="../static"), name="static")
+templates = Jinja2Templates(directory=settings.templates_dir)
+app.mount("/static", StaticFiles(directory=settings.static_dir), name="static")
 
 
-# @app.get("/", response_class=HTMLResponse)
-# async def main_page(request: Request):
-#     return templates.TemplateResponse("index.html", {"request": request})
+@app.get("/", response_class=HTMLResponse)
+async def main_page(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 if __name__ == "__main__":
