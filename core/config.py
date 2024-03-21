@@ -20,5 +20,7 @@ class Settings(BaseSettings):
     static_dir: Path = BASE_DIR / "static"
     image_dir: Path = static_dir / "images"
 
+    file_save_prefix: str = "/static/images/"
+
 
 settings = Settings()

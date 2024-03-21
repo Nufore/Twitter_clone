@@ -1,4 +1,5 @@
 from pydantic import BaseModel, ConfigDict
+from typing import List
 
 
 class TweetBase(BaseModel):
@@ -7,7 +8,7 @@ class TweetBase(BaseModel):
 
 
 class TweetCreate(TweetBase):
-    pass
+    tweet_media_ids: List[int] | None = None
 
 
 class Tweet(TweetBase):

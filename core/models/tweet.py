@@ -29,7 +29,7 @@ class Tweet(UserRelationMixin, Base):
         return {
             "id": self.id,
             "content": self.tweet_data,
-            "attachments": [],  # [media.path for media in self.medias],
+            "attachments": [media.path for media in self.medias],
             "author": self.user.id_name_to_json(),
             "likes": [like.user.id_name_to_json() for like in self.likes],
         }

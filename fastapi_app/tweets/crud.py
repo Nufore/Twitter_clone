@@ -3,13 +3,22 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload, subqueryload
 
 from .schemas import TweetCreate
-from core.models import Tweet, Like
+from core.models import Tweet, Like, Media
 
 
 async def create_tweet(session: AsyncSession, tweet_in: TweetCreate):
-    tweet = Tweet(**tweet_in.model_dump())
+    tweet = Tweet(tweet_data=tweet_in.tweet_data, user_id=tweet_in.user_id)
     session.add(tweet)
     await session.commit()
+
+    if tweet_in.tweet_media_ids:
+        for media_id in tweet_in.tweet_media_ids:
+            stmt = select(Media).where(Media.id == media_id)
+            media_file = await session.scalar(stmt)
+            if media_file:
+                media_file.tweet_id = tweet.id
+
+        await session.commit()
     return {"tweet_id": tweet.id}
 
 
@@ -24,6 +33,7 @@ async def get_tweets(session: AsyncSession, api_key: str) -> dict | None:
         .options(
             selectinload(Tweet.likes).subqueryload(Like.user),
             selectinload(Tweet.user),
+            selectinload(Tweet.medias),
         )
         .order_by(-Tweet.id)
     )
