@@ -1,9 +1,10 @@
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload, subqueryload
 
 from .schemas import TweetCreate
-from core.models import Tweet, Like, Media
+from core.models import Tweet, Like, Media, User
+from ..users import crud as users_crud
 
 
 async def create_tweet(session: AsyncSession, tweet_in: TweetCreate):
@@ -27,6 +28,8 @@ async def get_tweet(session: AsyncSession, tweet_id: int) -> Tweet | None:
 
 
 async def get_tweets(session: AsyncSession, api_key: str) -> dict | None:
+    stmt = select(User).options(joinedload(User.followed)).where(User.api_key == api_key)
+    user: User | None = await session.scalar(stmt)
 
     stmt = (
         select(Tweet)
@@ -35,6 +38,7 @@ async def get_tweets(session: AsyncSession, api_key: str) -> dict | None:
             selectinload(Tweet.user),
             selectinload(Tweet.medias),
         )
+        .filter(or_(Tweet.user_id.in_(flwr.id for flwr in user.followed), Tweet.user_id == user.id))
         .order_by(-Tweet.id)
     )
     res = await session.scalars(stmt)

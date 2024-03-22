@@ -2,6 +2,7 @@ from fastapi import APIRouter, status, Request, Depends, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from werkzeug.utils import secure_filename
 import os
+import time
 
 from core.models import db_helper
 from core.config import settings
@@ -16,7 +17,7 @@ async def post_media(
     file: UploadFile,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    filename = secure_filename(file.filename)
+    filename = secure_filename(f"{time.time()}_{file.filename}")
     content = await file.read()
     with open(os.path.join(settings.image_dir, filename), "wb") as f:
         f.write(content)
