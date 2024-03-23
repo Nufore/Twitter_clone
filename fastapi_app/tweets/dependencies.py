@@ -1,10 +1,13 @@
 from typing import Annotated
 
-from fastapi import Path, Depends, HTTPException, status
+from fastapi import Path, Depends, Header, HTTPException, status
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload, selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.models import db_helper, Tweet
+from core.models import db_helper, Tweet, User
 from . import crud
+from ..users import crud as user_crud
 
 
 async def tweet_by_id(
@@ -18,4 +21,22 @@ async def tweet_by_id(
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f"Tweet {tweet_id} not found.",
+    )
+
+
+async def tweet_for_delete(
+    tweet_id: Annotated[int, Path],
+    api_key: Annotated[str, Header()],
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+) -> Tweet:
+    user: User = await user_crud.get_user_by_api_key(session=session, api_key=api_key)
+    stmt = select(Tweet).where(Tweet.id == tweet_id, Tweet.user_id == user.id)
+    tweet: Tweet | None = await session.scalar(stmt)
+
+    if tweet:
+        return tweet
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"Tweet {tweet_id} by user <{api_key}> not found.",
     )

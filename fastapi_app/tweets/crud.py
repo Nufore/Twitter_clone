@@ -1,14 +1,13 @@
-from sqlalchemy import select, and_, or_
+from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload, selectinload, subqueryload
+from sqlalchemy.orm import selectinload
 
 from .schemas import TweetCreate
 from core.models import Tweet, Like, Media, User
-from ..users import crud as users_crud
 
 
-async def create_tweet(session: AsyncSession, tweet_in: TweetCreate):
-    tweet = Tweet(tweet_data=tweet_in.tweet_data, user_id=tweet_in.user_id)
+async def create_tweet(session: AsyncSession, tweet_in: TweetCreate, user_id: int):
+    tweet = Tweet(tweet_data=tweet_in.tweet_data, user_id=user_id)
     session.add(tweet)
     await session.commit()
 
@@ -20,17 +19,14 @@ async def create_tweet(session: AsyncSession, tweet_in: TweetCreate):
                 media_file.tweet_id = tweet.id
 
         await session.commit()
-    return {"tweet_id": tweet.id}
+    return {"result": True, "tweet_id": tweet.id}
 
 
 async def get_tweet(session: AsyncSession, tweet_id: int) -> Tweet | None:
     return await session.get(Tweet, tweet_id)
 
 
-async def get_tweets(session: AsyncSession, api_key: str) -> dict | None:
-    stmt = select(User).options(joinedload(User.followed)).where(User.api_key == api_key)
-    user: User | None = await session.scalar(stmt)
-
+async def get_tweets(session: AsyncSession, user: User) -> dict | None:
     stmt = (
         select(Tweet)
         .options(
@@ -38,7 +34,12 @@ async def get_tweets(session: AsyncSession, api_key: str) -> dict | None:
             selectinload(Tweet.user),
             selectinload(Tweet.medias),
         )
-        .filter(or_(Tweet.user_id.in_(flwr.id for flwr in user.followed), Tweet.user_id == user.id))
+        .filter(
+            or_(
+                Tweet.user_id.in_(flwr.id for flwr in user.followed),
+                Tweet.user_id == user.id,
+            )
+        )
         .order_by(-Tweet.id)
     )
     res = await session.scalars(stmt)
@@ -52,21 +53,15 @@ async def get_tweets(session: AsyncSession, api_key: str) -> dict | None:
     return data
 
 
-async def delete_tweet(session: AsyncSession, tweet_id: int, user_id: int):
-    stmt = select(Tweet).where(Tweet.id == tweet_id, Tweet.user_id == user_id)
-    tweet: Tweet | None = await session.scalar(stmt)
-    if tweet:
-        await session.delete(tweet)
-        await session.commit()
-        return True
-    return False
+async def delete_tweet(session: AsyncSession, tweet: Tweet):
+    await session.delete(tweet)
+    await session.commit()
+    return {"result": True}
 
 
 async def create_like(session: AsyncSession, tweet_id: int, user_id: int):
-    stmt = select(Like).where(Like.user_id == user_id, Like.tweet_id == tweet_id)
-    is_exists: Like | None = await session.scalar(stmt)
-    if is_exists:
-        return {"result": False}
+    if await is_like_on_tweet_exists(session=session, tweet_id=tweet_id, user_id=user_id):
+        return {"result": False, "message": "Like is already exists"}
     new_like = Like(user_id=user_id, tweet_id=tweet_id)
     session.add(new_like)
     await session.commit()
@@ -74,10 +69,15 @@ async def create_like(session: AsyncSession, tweet_id: int, user_id: int):
 
 
 async def delete_like(session: AsyncSession, tweet_id: int, user_id: int):
-    stmt = select(Like).where(Like.user_id == user_id, Like.tweet_id == tweet_id)
-    like: Like | None = await session.scalar(stmt)
+    like = await is_like_on_tweet_exists(session=session, tweet_id=tweet_id, user_id=user_id)
     if not like:
-        return {"result": False}
+        return {"result": False, "message": "There is not like on that tweet"}
     await session.delete(like)
     await session.commit()
     return {"result": True}
+
+
+async def is_like_on_tweet_exists(session: AsyncSession, tweet_id: int, user_id: int) -> Like | None:
+    stmt = select(Like).where(Like.user_id == user_id, Like.tweet_id == tweet_id)
+    like_or_not_exists: Like | None = await session.scalar(stmt)
+    return like_or_not_exists

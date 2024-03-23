@@ -7,7 +7,8 @@ class TweetBase(BaseModel):
     user_id: int | None = None
 
 
-class TweetCreate(TweetBase):
+class TweetCreate(BaseModel):
+    tweet_data: str
     tweet_media_ids: List[int] | None = None
 
 

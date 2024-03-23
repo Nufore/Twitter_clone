@@ -1,3 +1,5 @@
+from fastapi import HTTPException, status
+
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 from sqlalchemy.engine import Result
@@ -46,8 +48,13 @@ async def delete_user(
 
 
 async def get_user_by_api_key(session: AsyncSession, api_key: str) -> User | None:
-    stmt = select(User).where(User.api_key == api_key)
+    stmt = select(User).options(joinedload(User.followed)).where(User.api_key == api_key)
     user: User | None = await session.scalar(stmt)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with Api-Key='{api_key}' not found.",
+        )
     return user
 
 
