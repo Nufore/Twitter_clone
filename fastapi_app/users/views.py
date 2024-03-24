@@ -38,11 +38,11 @@ async def unfollow_user(
 async def get_user_me(
     user: User = Depends(user_by_apikey),
 ):
-    return crud.get_user_data(user=user)
+    return await crud.get_user_data(user=user)
 
 
 @router.get("/{user_id}", status_code=status.HTTP_200_OK)
 async def get_user(
     user: User = Depends(user_by_id),
 ):
-    return crud.get_user_data(user=user)
+    return await crud.get_user_data(user=user)
