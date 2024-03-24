@@ -1,9 +1,7 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
-from sqlalchemy import Table, Column, ForeignKey, Integer, Text, select
-from sqlalchemy.orm import Mapped, mapped_column, relationship, backref
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from sqlalchemy import Table, Column, ForeignKey, Integer, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 
 if TYPE_CHECKING:
