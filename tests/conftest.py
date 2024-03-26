@@ -22,7 +22,13 @@ async_session_maker = async_sessionmaker(
 
 db_helper_test = DatabaseHelper(url=DATABASE_URL_TEST, echo=False)
 
-app.dependency_overrides[db_helper] = db_helper_test
+
+async def override_get_async_session() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session_maker() as session:
+        yield session
+
+
+app.dependency_overrides[db_helper.scoped_session_dependency] = override_get_async_session
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -38,7 +44,8 @@ async def prepare_database():
 async def prepare_db_create_user():
     async with async_session_maker() as session:
         new_user = User(name="test_user", api_key="test")
-        session.add(new_user)
+        another_user = User(name="qwerty_user", api_key="qwerty")
+        session.add_all([new_user, another_user])
         await session.commit()
 
 

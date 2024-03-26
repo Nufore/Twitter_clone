@@ -6,7 +6,7 @@ from conftest import async_session_maker, db_helper_test
 from core.models.user import User
 
 
-# @pytest.mark.anyio
+@pytest.mark.asyncio(scope="session")
 async def test_create_user():
     async with async_session_maker() as session:
         name = "qwe_user"

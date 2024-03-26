@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import db_helper, Tweet, User
@@ -37,17 +37,25 @@ async def delete_tweet(
 
 @router.post("/{tweet_id}/likes", status_code=status.HTTP_201_CREATED)
 async def create_like(
+    response: Response,
     tweet: Tweet = Depends(tweet_by_id),
     user: User = Depends(user_dependencies.user_by_apikey),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    return await crud.create_like(session=session, tweet_id=tweet.id, user_id=user.id)
+    res = await crud.create_like(session=session, tweet_id=tweet.id, user_id=user.id)
+    if not res["result"]:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+    return res
 
 
 @router.delete("/{tweet_id}/likes", status_code=status.HTTP_200_OK)
 async def delete_like(
+    response: Response,
     tweet: Tweet = Depends(tweet_by_id),
     user: User = Depends(user_dependencies.user_by_apikey),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    return await crud.delete_like(session=session, tweet_id=tweet.id, user_id=user.id)
+    res = await crud.delete_like(session=session, tweet_id=tweet.id, user_id=user.id)
+    if not res["result"]:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+    return res
