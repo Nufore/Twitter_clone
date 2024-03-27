@@ -22,5 +22,7 @@ class Settings(BaseSettings):
 
     file_save_prefix: str = "/static/images/"
 
+    allowed_extensions: set = ("jpg", "png", "gif", "jpeg",)
+
 
 settings = Settings()
