@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import db_helper, User
@@ -10,15 +10,19 @@ router = APIRouter(tags=["Users"])
 
 @router.post("/{user_id}/follow", status_code=status.HTTP_201_CREATED)
 async def follow_user(
+    response: Response,
     user: User = Depends(user_by_apikey),
     user_to_follow: User = Depends(user_by_id),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    return await crud.follow_user(
+    res = await crud.follow_user(
         session=session,
         user=user,
         user_to_follow=user_to_follow,
     )
+    if not res["result"]:
+        response.status_code = status.HTTP_200_OK
+    return res
 
 
 @router.delete("/{user_id}/follow", status_code=status.HTTP_200_OK)
