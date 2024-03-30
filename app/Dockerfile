@@ -1,15 +1,22 @@
 FROM python:3.11.8-slim
 
-ADD ../requirements.txt /app/requirements.txt
+ADD requirements.txt /requirements.txt
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
-RUN pip install -r /app/requirements.txt
 
 ADD main.py /app/main.py
-ADD models.py /app/models.py
+COPY /core /app/core
+COPY /fastapi_app /app/fastapi_app
 
-WORKDIR /app
+
+COPY /static /app/static
+COPY /templates /app/templates
+
 
 RUN alembic init alembic
 COPY alembic.ini /app/alembic.ini
-COPY alembic/env.py /app/alembic/env.py
+COPY /alembic /app/alembic
 
+
+CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8000", "app.main:app", "--reload"]

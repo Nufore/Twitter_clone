@@ -3,11 +3,11 @@ from pydantic_settings import BaseSettings
 from pathlib import Path
 
 
-BASE_DIR = Path(__file__).parent.parent.parent
+BASE_DIR = Path(__file__).parent.parent
 
 
 class DbSettings(BaseModel):
-    url: str = "postgresql+asyncpg://admin:admin@localhost"
+    url: str = "postgresql+asyncpg://admin:admin@postgres:5432/t_clone_db"
     echo: bool = False
 
 
