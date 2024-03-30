@@ -2,7 +2,7 @@ from fastapi import APIRouter, status, Depends, UploadFile, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import crud
-from core.models import db_helper
+from app.core.models import db_helper
 from .schemas import FileSchema
 
 router = APIRouter(tags=["Medias"])

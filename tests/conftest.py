@@ -5,11 +5,10 @@ from httpx import AsyncClient, ASGITransport
 from sqlalchemy.pool import NullPool
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
-
-from main import app
-from core.models import User
-from core.models.base import Base
-from core.models.db_helper import DatabaseHelper, db_helper
+from app.main import app
+from app.core.models import User
+from app.core.models.base import Base
+from app.core.models.db_helper import DatabaseHelper, db_helper
 
 DATABASE_URL_TEST = f"postgresql+asyncpg://admin:admin@localhost/test"
 

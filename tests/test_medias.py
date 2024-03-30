@@ -2,8 +2,8 @@ import pytest
 from sqlalchemy import select
 from httpx import AsyncClient
 
-from core.config import BASE_DIR
-from core.models.media import Media
+from app.core.config import BASE_DIR
+from app.core.models.media import Media
 from conftest import async_session_maker
 
 

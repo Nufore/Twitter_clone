@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from .schemas import TweetCreate
-from core.models import Tweet, Like, Media, User
+from app.core.models import Tweet, Like, Media, User
 
 
 async def create_tweet(session: AsyncSession, tweet_in: TweetCreate, user_id: int):

@@ -3,7 +3,7 @@ from httpx import AsyncClient
 from sqlalchemy import select
 
 from conftest import async_session_maker
-from core.models.user import User
+from app.core.models import User
 
 
 @pytest.mark.asyncio(scope="session")

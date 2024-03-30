@@ -5,8 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import os
 import time
 
-from core.config import settings
-from core.models import Media
+from app.core.config import settings
+from app.core.models import Media
 
 
 async def create_media(session: AsyncSession, path: str):

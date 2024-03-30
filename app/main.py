@@ -6,10 +6,10 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 
-from core.config import settings
-from core.models import Base, db_helper
+from app.core.config import settings
+from app.core.models import Base, db_helper
 
-from fastapi_app import router as router_api
+from app.fastapi_app import router as router_api
 
 
 @asynccontextmanager

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from core.config import settings
+from app.core.config import settings
 
 
 class FileSchema(BaseModel):

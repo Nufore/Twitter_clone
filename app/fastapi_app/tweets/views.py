@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.models import db_helper, Tweet, User
+from app.core.models import db_helper, Tweet, User
 from .dependencies import tweet_by_id, tweet_for_delete
 from .schemas import TweetCreate
 from . import crud

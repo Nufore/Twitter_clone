@@ -2,10 +2,9 @@ from typing import Annotated
 
 from fastapi import Path, Depends, Header, HTTPException, status
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload, selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.models import db_helper, Tweet, User
+from app.core.models import db_helper, Tweet, User
 from . import crud
 from ..users import crud as user_crud
 
