@@ -7,7 +7,7 @@ from app.core.models.media import Media
 from conftest import async_session_maker
 
 
-test_file = BASE_DIR / "tests" / "test_image.jpg"
+test_file = BASE_DIR.parent / "tests" / "test_image.jpg"
 FILES = {"file": open(test_file, "rb")}
 
 
