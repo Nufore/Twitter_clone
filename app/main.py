@@ -1,9 +1,7 @@
 import uvicorn
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+from fastapi.responses import JSONResponse
 
 from app.core.config import settings
 from app.core.models import Base, db_helper
@@ -20,9 +18,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(router=router_api, prefix=settings.api_prefix)
 
-# templates = Jinja2Templates(directory=settings.templates_dir)
-# app.mount("/static", StaticFiles(directory=settings.static_dir), name="static")
-
 
 @app.exception_handler(Exception)
 async def custom_exception_handler(request: Request, exc: Exception):
@@ -34,11 +29,6 @@ async def custom_exception_handler(request: Request, exc: Exception):
             "error_message": exc.__repr__(),
         },
     )
-
-
-# @app.get("/", response_class=HTMLResponse)
-# async def main_page(request: Request):
-#     return templates.TemplateResponse("index.html", {"request": request})
 
 
 if __name__ == "__main__":

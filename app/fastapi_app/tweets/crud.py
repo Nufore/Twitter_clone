@@ -4,6 +4,7 @@ from sqlalchemy.orm import selectinload
 
 from .schemas import TweetCreate
 from app.core.models import Tweet, Like, Media, User
+from app.core.config import settings
 
 
 async def create_tweet(session: AsyncSession, tweet_in: TweetCreate, user_id: int):
@@ -27,21 +28,32 @@ async def get_tweet(session: AsyncSession, tweet_id: int) -> Tweet | None:
 
 
 async def get_tweets(session: AsyncSession, user: User) -> dict | None:
-    stmt = (
-        select(Tweet)
-        .options(
-            selectinload(Tweet.likes).subqueryload(Like.user),
-            selectinload(Tweet.user),
-            selectinload(Tweet.medias),
-        )
-        .filter(
-            or_(
-                Tweet.user_id.in_(flwr.id for flwr in user.followed),
-                Tweet.user_id == user.id,
+    if settings.upload_all_tweets:
+        stmt = (
+            select(Tweet)
+            .options(
+                selectinload(Tweet.likes).subqueryload(Like.user),
+                selectinload(Tweet.user),
+                selectinload(Tweet.medias),
             )
+            .order_by(-Tweet.id)
         )
-        .order_by(-Tweet.id)
-    )
+    else:
+        stmt = (
+            select(Tweet)
+            .options(
+                selectinload(Tweet.likes).subqueryload(Like.user),
+                selectinload(Tweet.user),
+                selectinload(Tweet.medias),
+            )
+            .filter(
+                or_(
+                    Tweet.user_id.in_(flwr.id for flwr in user.followed),
+                    Tweet.user_id == user.id,
+                )
+            )
+            .order_by(-Tweet.id)
+        )
     res = await session.scalars(stmt)
 
     tweets = res.all()

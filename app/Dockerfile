@@ -11,7 +11,6 @@ COPY /fastapi_app /app/fastapi_app
 
 
 COPY /static /app/static
-COPY /templates /app/templates
 
 
 RUN alembic init alembic
