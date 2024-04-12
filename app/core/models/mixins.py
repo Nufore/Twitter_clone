@@ -1,12 +1,11 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy.orm import declared_attr, Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
-
+from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
 if TYPE_CHECKING:
-    from .user import User
     from .tweet import Tweet
+    from .user import User
 
 
 class UserRelationMixin:

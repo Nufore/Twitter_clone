@@ -1,7 +1,7 @@
-from .base import Base
-from .mixins import UserRelationMixin, TweetRelationMixin
-
 from sqlalchemy import UniqueConstraint
+
+from .base import Base
+from .mixins import TweetRelationMixin, UserRelationMixin
 
 
 class Like(UserRelationMixin, TweetRelationMixin, Base):

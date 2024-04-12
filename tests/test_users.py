@@ -1,8 +1,8 @@
 import pytest
+from conftest import async_session_maker
 from httpx import AsyncClient
 from sqlalchemy import select
 
-from conftest import async_session_maker
 from app.core.models import User
 
 

@@ -1,12 +1,13 @@
 from typing import TYPE_CHECKING, List
 
-from sqlalchemy import Table, Column, ForeignKey, Integer, Text
+from sqlalchemy import Column, ForeignKey, Integer, Table, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from .base import Base
 
 if TYPE_CHECKING:
-    from .tweet import Tweet
     from .like import Like
+    from .tweet import Tweet
 
 
 followers = Table(

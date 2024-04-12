@@ -1,5 +1,6 @@
-import uvicorn
 from contextlib import asynccontextmanager
+
+import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 

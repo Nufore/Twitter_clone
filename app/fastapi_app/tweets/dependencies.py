@@ -1,17 +1,18 @@
 from typing import Annotated
 
-from fastapi import Path, Depends, Header, HTTPException, status
+from fastapi import Depends, Header, HTTPException, Path, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.models import db_helper, Tweet, User
-from . import crud
+from app.core.models import Tweet, User, db_helper
+
 from ..users import crud as user_crud
+from . import crud
 
 
 async def tweet_by_id(
-    tweet_id: Annotated[int, Path],
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+        tweet_id: Annotated[int, Path],
+        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> Tweet:
     tweet = await crud.get_tweet(session=session, tweet_id=tweet_id)
     if tweet:
@@ -24,9 +25,9 @@ async def tweet_by_id(
 
 
 async def tweet_for_delete(
-    tweet_id: Annotated[int, Path],
-    api_key: Annotated[str, Header()],
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+        tweet_id: Annotated[int, Path],
+        api_key: Annotated[str, Header()],
+        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> Tweet:
     user: User = await user_crud.get_user_by_api_key(session=session, api_key=api_key)
     stmt = select(Tweet).where(Tweet.id == tweet_id, Tweet.user_id == user.id)

@@ -1,10 +1,11 @@
-from sqlalchemy import select, or_
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from .schemas import TweetCreate
-from app.core.models import Tweet, Like, Media, User
 from app.core.config import settings
+from app.core.models import Like, Media, Tweet, User
+
+from .schemas import TweetCreate
 
 
 async def create_tweet(session: AsyncSession, tweet_in: TweetCreate, user_id: int):

@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+
 from app.core.config import settings
 
 
@@ -8,8 +9,8 @@ class FileSchema(BaseModel):
 
     def check_content_type(self) -> dict:
         if (
-            self.filename.rsplit(".", 1)[1] in settings.allowed_extensions
-            and "image" in self.content_type
+                self.filename.rsplit(".", 1)[1] in settings.allowed_extensions
+                and "image" in self.content_type
         ):
             return {"result": True}
 

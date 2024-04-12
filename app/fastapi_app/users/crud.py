@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from app.core.models import User
 
@@ -32,8 +32,8 @@ async def get_user_by_api_key(session: AsyncSession, api_key: str) -> User | Non
 
 
 def is_followed(
-    user: User,
-    user_to_follow: User,
+        user: User,
+        user_to_follow: User,
 ):
     if user_to_follow in user.followed or user.id == user_to_follow.id:
         return True
@@ -41,9 +41,9 @@ def is_followed(
 
 
 async def follow_user(
-    session: AsyncSession,
-    user: User,
-    user_to_follow: User,
+        session: AsyncSession,
+        user: User,
+        user_to_follow: User,
 ):
     if not is_followed(user=user, user_to_follow=user_to_follow):
         user.followed.append(user_to_follow)
@@ -53,9 +53,9 @@ async def follow_user(
 
 
 async def unfollow_user(
-    session: AsyncSession,
-    user: User,
-    user_to_unfollow: User,
+        session: AsyncSession,
+        user: User,
+        user_to_unfollow: User,
 ):
     if is_followed(user=user, user_to_follow=user_to_unfollow):
         user.followed.remove(user_to_unfollow)

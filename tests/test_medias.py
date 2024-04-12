@@ -1,11 +1,10 @@
 import pytest
-from sqlalchemy import select
+from conftest import async_session_maker
 from httpx import AsyncClient
+from sqlalchemy import select
 
 from app.core.config import BASE_DIR
 from app.core.models.media import Media
-from conftest import async_session_maker
-
 
 test_file = BASE_DIR.parent / "tests" / "test_image.jpg"
 FILES = {"file": open(test_file, "rb")}
@@ -13,7 +12,6 @@ FILES = {"file": open(test_file, "rb")}
 
 @pytest.mark.asyncio(scope="session")
 async def test_post_media(ac: AsyncClient):
-
     async with async_session_maker() as session:
         stmt = select(Media).order_by(-Media.id).limit(1)
         media_from_db = await session.scalar(stmt)

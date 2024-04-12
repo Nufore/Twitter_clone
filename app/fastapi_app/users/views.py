@@ -1,20 +1,20 @@
-from fastapi import APIRouter, status, Depends, Response
+from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.models import User, db_helper
 
-from app.core.models import db_helper, User
 from . import crud
-from .dependencies import user_by_id, user_by_apikey
+from .dependencies import user_by_apikey, user_by_id
 
 router = APIRouter(tags=["Users"])
 
 
 @router.post("/{user_id}/follow", status_code=status.HTTP_201_CREATED)
 async def follow_user(
-    response: Response,
-    user: User = Depends(user_by_apikey),
-    user_to_follow: User = Depends(user_by_id),
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+        response: Response,
+        user: User = Depends(user_by_apikey),
+        user_to_follow: User = Depends(user_by_id),
+        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     res = await crud.follow_user(
         session=session,
@@ -28,9 +28,9 @@ async def follow_user(
 
 @router.delete("/{user_id}/follow", status_code=status.HTTP_200_OK)
 async def unfollow_user(
-    user: User = Depends(user_by_apikey),
-    user_to_unfollow: User = Depends(user_by_id),
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+        user: User = Depends(user_by_apikey),
+        user_to_unfollow: User = Depends(user_by_id),
+        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     return await crud.unfollow_user(
         session=session,
@@ -41,13 +41,13 @@ async def unfollow_user(
 
 @router.get("/me", status_code=status.HTTP_200_OK)
 async def get_user_me(
-    user: User = Depends(user_by_apikey),
+        user: User = Depends(user_by_apikey),
 ):
     return await crud.get_user_data(user=user)
 
 
 @router.get("/{user_id}", status_code=status.HTTP_200_OK)
 async def get_user(
-    user: User = Depends(user_by_id),
+        user: User = Depends(user_by_id),
 ):
     return await crud.get_user_data(user=user)

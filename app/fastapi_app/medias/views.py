@@ -1,8 +1,9 @@
-from fastapi import APIRouter, status, Depends, UploadFile, Response
+from fastapi import APIRouter, Depends, Response, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from . import crud
 from app.core.models import db_helper
+
+from . import crud
 from .schemas import FileSchema
 
 router = APIRouter(tags=["Medias"])
@@ -10,9 +11,9 @@ router = APIRouter(tags=["Medias"])
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def post_media(
-    file: UploadFile,
-    response: Response,
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+        file: UploadFile,
+        response: Response,
+        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     file_data = FileSchema(filename=file.filename, content_type=file.content_type)
     result = file_data.check_content_type()
