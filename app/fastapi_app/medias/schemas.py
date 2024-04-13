@@ -16,5 +16,6 @@ class FileSchema(BaseModel):
 
         return {
             "result": False,
-            "detail": f"wrong media data. allowed file extensions: .{' .'.join(settings.allowed_extensions)}",
+            "detail": f"wrong media data. allowed file extensions: "
+                      f".{' .'.join(settings.allowed_extensions)}",
         }

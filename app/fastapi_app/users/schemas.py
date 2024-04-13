@@ -1,3 +1,4 @@
+from typing import List
 from pydantic import BaseModel, ConfigDict
 
 
@@ -22,3 +23,24 @@ class UserUpdatePartial(UserCreate):
 class User(UserBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
+
+
+class ResponseFollowUser(BaseModel):
+    result: bool = True | False
+
+
+class Follow(BaseModel):
+    id: int
+    name: str
+
+
+class UserData(BaseModel):
+    id: int
+    name: str
+    followers: List[Follow]
+    following: List[Follow]
+
+
+class ResponseUser(BaseModel):
+    result: bool = True | False
+    user: UserData

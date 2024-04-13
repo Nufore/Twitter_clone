@@ -24,7 +24,10 @@ async def test_create_user():
 @pytest.mark.asyncio(scope="session")
 async def test_get_user_by_id(ac: AsyncClient):
     user_id = 2
-    response = await ac.get(f"/api/users/{user_id}", headers={"Api-Key": "test"})
+    response = await ac.get(
+        f"/api/users/{user_id}",
+        headers={"Api-Key": "test"},
+    )
     data = response.json()
     assert response.status_code == 200
     assert data["user"]["id"] == user_id
@@ -34,7 +37,10 @@ async def test_get_user_by_id(ac: AsyncClient):
 @pytest.mark.asyncio(scope="session")
 async def test_get_user_by_wrong_id(ac: AsyncClient):
     user_id = 100 * 100
-    response = await ac.get(f"/api/users/{user_id}", headers={"Api-Key": "test"})
+    response = await ac.get(
+        f"/api/users/{user_id}",
+        headers={"Api-Key": "test"},
+    )
     data = response.json()
     assert response.status_code == 404
     assert data["detail"] == f"User {user_id} not found."
@@ -61,7 +67,10 @@ async def test_get_user_me_wrong_api_key(ac: AsyncClient):
 @pytest.mark.asyncio(scope="session")
 async def test_follow_user(ac: AsyncClient):
     user_id = 2
-    response = await ac.post(f"/api/users/{user_id}/follow", headers={"Api-Key": "test"})
+    response = await ac.post(
+        f"/api/users/{user_id}/follow",
+        headers={"Api-Key": "test"},
+    )
     result = response.json()["result"]
     assert response.status_code == 201
     assert result
@@ -70,7 +79,10 @@ async def test_follow_user(ac: AsyncClient):
 @pytest.mark.asyncio(scope="session")
 async def test_follow_user_wrong_id(ac: AsyncClient):
     user_id = 2 * 1000
-    response = await ac.post(f"/api/users/{user_id}/follow", headers={"Api-Key": "test"})
+    response = await ac.post(
+        f"/api/users/{user_id}/follow",
+        headers={"Api-Key": "test"},
+    )
     result = response.json()
     assert response.status_code == 404
     assert result["detail"] == f"User {user_id} not found."
@@ -79,7 +91,10 @@ async def test_follow_user_wrong_id(ac: AsyncClient):
 @pytest.mark.asyncio(scope="session")
 async def test_follow_user_again(ac: AsyncClient):
     user_id = 2
-    response = await ac.post(f"/api/users/{user_id}/follow", headers={"Api-Key": "test"})
+    response = await ac.post(
+        f"/api/users/{user_id}/follow",
+        headers={"Api-Key": "test"},
+    )
     result = response.json()["result"]
     assert response.status_code == 200
     assert not result
@@ -88,7 +103,10 @@ async def test_follow_user_again(ac: AsyncClient):
 @pytest.mark.asyncio(scope="session")
 async def test_unfollow_user(ac: AsyncClient):
     user_id = 2
-    response = await ac.delete(f"/api/users/{user_id}/follow", headers={"Api-Key": "test"})
+    response = await ac.delete(
+        f"/api/users/{user_id}/follow",
+        headers={"Api-Key": "test"},
+    )
     result = response.json()["result"]
     assert response.status_code == 200
     assert result

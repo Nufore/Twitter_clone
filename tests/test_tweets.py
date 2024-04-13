@@ -87,7 +87,10 @@ async def test_delete_like(ac: AsyncClient):
 async def test_delete_tweet_by_wrong_user(ac: AsyncClient):
     tweet_id = 1
     api_key = "qwerty"
-    response = await ac.delete(f"/api/tweets/{tweet_id}", headers={"Api-Key": api_key})
+    response = await ac.delete(
+        f"/api/tweets/{tweet_id}",
+        headers={"Api-Key": api_key},
+    )
     detail = response.json()["detail"]
     assert response.status_code == 404
     assert detail == f"Tweet {tweet_id} by user <{api_key}> not found."
@@ -96,7 +99,10 @@ async def test_delete_tweet_by_wrong_user(ac: AsyncClient):
 @pytest.mark.asyncio(scope="session")
 async def test_delete_tweet(ac: AsyncClient):
     tweet_id = 1
-    response = await ac.delete(f"/api/tweets/{tweet_id}", headers={"Api-Key": "test"})
+    response = await ac.delete(
+        f"/api/tweets/{tweet_id}",
+        headers={"Api-Key": "test"},
+    )
     assert response.status_code == 200
 
 

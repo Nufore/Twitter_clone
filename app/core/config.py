@@ -20,7 +20,7 @@ class Settings(BaseSettings):
 
     file_save_prefix: str = "/static/images/"
 
-    allowed_extensions: set = ("jpg", "png", "gif", "jpeg",)
+    allowed_extensions: set = {"jpg", "png", "gif", "jpeg"}
 
     upload_all_tweets: float = False
 

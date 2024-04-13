@@ -29,7 +29,10 @@ async def tweet_for_delete(
         api_key: Annotated[str, Header()],
         session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> Tweet:
-    user: User = await user_crud.get_user_by_api_key(session=session, api_key=api_key)
+    user: User = await user_crud.get_user_by_api_key(
+        session=session,
+        api_key=api_key,
+    )
     stmt = select(Tweet).where(Tweet.id == tweet_id, Tweet.user_id == user.id)
     tweet: Tweet | None = await session.scalar(stmt)
 

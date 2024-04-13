@@ -15,7 +15,10 @@ async def post_media(
         response: Response,
         session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    file_data = FileSchema(filename=file.filename, content_type=file.content_type)
+    file_data = FileSchema(
+        filename=file.filename,
+        content_type=file.content_type,
+    )
     result = file_data.check_content_type()
     if result["result"]:
         filename = await crud.save_media_file(file=file)

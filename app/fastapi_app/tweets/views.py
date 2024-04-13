@@ -17,7 +17,11 @@ async def create_tweet(
         user: User = Depends(user_dependencies.user_by_apikey),
         session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    return await crud.create_tweet(session=session, tweet_in=tweet_in, user_id=user.id)
+    return await crud.create_tweet(
+        session=session,
+        tweet_in=tweet_in,
+        user_id=user.id,
+    )
 
 
 @router.get("/", status_code=status.HTTP_200_OK)
@@ -43,7 +47,11 @@ async def create_like(
         user: User = Depends(user_dependencies.user_by_apikey),
         session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    res = await crud.create_like(session=session, tweet_id=tweet.id, user_id=user.id)
+    res = await crud.create_like(
+        session=session,
+        tweet_id=tweet.id,
+        user_id=user.id,
+    )
     if not res["result"]:
         response.status_code = status.HTTP_400_BAD_REQUEST
     return res
@@ -56,7 +64,11 @@ async def delete_like(
         user: User = Depends(user_dependencies.user_by_apikey),
         session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    res = await crud.delete_like(session=session, tweet_id=tweet.id, user_id=user.id)
+    res = await crud.delete_like(
+        session=session,
+        tweet_id=tweet.id,
+        user_id=user.id,
+    )
     if not res["result"]:
         response.status_code = status.HTTP_400_BAD_REQUEST
     return res

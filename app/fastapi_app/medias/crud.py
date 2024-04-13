@@ -21,7 +21,9 @@ async def save_media_file(file: UploadFile):
     filename = secure_filename(f"{time.time()}_{file.filename}")
     content = await file.read()
 
-    async with aiofiles.open(os.path.join(settings.static_image_dir, filename), "wb") as f:
+    file_to_write = os.path.join(settings.static_image_dir, filename)
+
+    async with aiofiles.open(file_to_write, "wb") as f:
         await f.write(content)
 
     return filename

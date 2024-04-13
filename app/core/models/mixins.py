@@ -14,7 +14,10 @@ class UserRelationMixin:
 
     @declared_attr
     def user_id(cls) -> Mapped[int]:
-        return mapped_column(ForeignKey("users.id"), primary_key=cls._user_primary_key)
+        return mapped_column(
+            ForeignKey("users.id"),
+            primary_key=cls._user_primary_key,
+        )
 
     @declared_attr
     def user(cls) -> Mapped["User"]:
@@ -28,7 +31,11 @@ class TweetRelationMixin:
 
     @declared_attr
     def tweet_id(cls) -> Mapped[int]:
-        return mapped_column(ForeignKey("tweets.id"), primary_key=cls._tweet_primary_key, nullable=cls._nullable)
+        return mapped_column(
+            ForeignKey("tweets.id"),
+            primary_key=cls._tweet_primary_key,
+            nullable=cls._nullable,
+        )
 
     @declared_attr
     def tweet(cls) -> Mapped["Tweet"]:

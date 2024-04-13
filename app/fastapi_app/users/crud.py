@@ -16,7 +16,10 @@ async def get_user(session: AsyncSession, user_id: int) -> User | None:
     return user
 
 
-async def get_user_by_api_key(session: AsyncSession, api_key: str) -> User | None:
+async def get_user_by_api_key(
+        session: AsyncSession,
+        api_key: str,
+) -> User:
     stmt = (
         select(User)
         .options(joinedload(User.followed), joinedload(User.followers))
@@ -35,9 +38,7 @@ def is_followed(
         user: User,
         user_to_follow: User,
 ):
-    if user_to_follow in user.followed or user.id == user_to_follow.id:
-        return True
-    return False
+    return user_to_follow in user.followed or user.id == user_to_follow.id
 
 
 async def follow_user(
@@ -65,7 +66,7 @@ async def unfollow_user(
 
 
 async def get_user_data(user: User) -> dict | None:
-    data = {
+    return {
         "result": True,
         "user": {
             "id": user.id,
@@ -74,4 +75,3 @@ async def get_user_data(user: User) -> dict | None:
             "following": [usr.id_name_to_json() for usr in user.followed],
         },
     }
-    return data

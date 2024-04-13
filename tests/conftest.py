@@ -11,7 +11,7 @@ from app.core.models.base import Base
 from app.core.models.db_helper import DatabaseHelper, db_helper
 from app.main import app
 
-DATABASE_URL_TEST = f"postgresql+asyncpg://admin:admin@localhost/test"
+DATABASE_URL_TEST = "postgresql+asyncpg://admin:admin@localhost/test"
 
 engine_test = create_async_engine(DATABASE_URL_TEST, poolclass=NullPool)
 async_session_maker = async_sessionmaker(
@@ -52,5 +52,8 @@ transport = ASGITransport(app=app)
 
 @pytest.fixture(scope="session")
 async def ac() -> AsyncGenerator[AsyncClient, None]:
-    async with AsyncClient(transport=transport, base_url="http://localhost:8000/") as ac:
+    async with AsyncClient(
+            transport=transport,
+            base_url="http://localhost:8000/",
+    ) as ac:
         yield ac

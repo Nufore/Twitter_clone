@@ -5,11 +5,19 @@ from app.core.models import User, db_helper
 
 from . import crud
 from .dependencies import user_by_apikey, user_by_id
+from .schemas import ResponseFollowUser, ResponseUser
 
 router = APIRouter(tags=["Users"])
 
 
-@router.post("/{user_id}/follow", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{user_id}/follow",
+    status_code=status.HTTP_201_CREATED,
+    response_model=ResponseFollowUser,
+    summary="Подписаться на другого пользователя",
+    description="Находим текущего пользователя по предоставленному API-ключу "
+                "и подписываемся на переданного по user_id",
+)
 async def follow_user(
         response: Response,
         user: User = Depends(user_by_apikey),
@@ -26,7 +34,14 @@ async def follow_user(
     return res
 
 
-@router.delete("/{user_id}/follow", status_code=status.HTTP_200_OK)
+@router.delete(
+    "/{user_id}/follow",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseFollowUser,
+    summary="Убрать подписку на другого пользователя",
+    description="Находим текущего пользователя по предоставленному API-ключу "
+                "и убираем подписку с переданного по user_id",
+)
 async def unfollow_user(
         user: User = Depends(user_by_apikey),
         user_to_unfollow: User = Depends(user_by_id),
@@ -39,14 +54,26 @@ async def unfollow_user(
     )
 
 
-@router.get("/me", status_code=status.HTTP_200_OK)
+@router.get(
+    "/me",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseUser,
+    summary="Получить информацию о своём профиле",
+    description="Находим пользователя по предоставленному API-ключу",
+)
 async def get_user_me(
         user: User = Depends(user_by_apikey),
 ):
     return await crud.get_user_data(user=user)
 
 
-@router.get("/{user_id}", status_code=status.HTTP_200_OK)
+@router.get(
+    "/{user_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=ResponseUser,
+    summary="Получить информацию о произвольном профиле по его id",
+    description="Находим пользователя по предоставленному id",
+)
 async def get_user(
         user: User = Depends(user_by_id),
 ):

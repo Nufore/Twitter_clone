@@ -8,7 +8,11 @@ from app.core.models import Like, Media, Tweet, User
 from .schemas import TweetCreate
 
 
-async def create_tweet(session: AsyncSession, tweet_in: TweetCreate, user_id: int):
+async def create_tweet(
+        session: AsyncSession,
+        tweet_in: TweetCreate,
+        user_id: int,
+):
     tweet = Tweet(tweet_data=tweet_in.tweet_data, user_id=user_id)
     session.add(tweet)
     await session.commit()
@@ -59,11 +63,10 @@ async def get_tweets(session: AsyncSession, user: User) -> dict | None:
 
     tweets = res.all()
 
-    data = {
+    return {
         "result": True,
         "tweets": [tweet.to_json() for tweet in tweets],
     }
-    return data
 
 
 async def delete_tweet(session: AsyncSession, tweet: Tweet):
@@ -73,7 +76,11 @@ async def delete_tweet(session: AsyncSession, tweet: Tweet):
 
 
 async def create_like(session: AsyncSession, tweet_id: int, user_id: int):
-    if await is_like_on_tweet_exists(session=session, tweet_id=tweet_id, user_id=user_id):
+    if await is_like_on_tweet_exists(
+            session=session,
+            tweet_id=tweet_id,
+            user_id=user_id,
+    ):
         return {"result": False, "message": "Like is already exists"}
     new_like = Like(user_id=user_id, tweet_id=tweet_id)
     session.add(new_like)
@@ -82,15 +89,29 @@ async def create_like(session: AsyncSession, tweet_id: int, user_id: int):
 
 
 async def delete_like(session: AsyncSession, tweet_id: int, user_id: int):
-    like = await is_like_on_tweet_exists(session=session, tweet_id=tweet_id, user_id=user_id)
+    like = await is_like_on_tweet_exists(
+        session=session,
+        tweet_id=tweet_id,
+        user_id=user_id,
+    )
     if not like:
-        return {"result": False, "message": "There is not like on that tweet"}
+        return {
+            "result": False,
+            "message": "There is not like on that tweet",
+        }
     await session.delete(like)
     await session.commit()
     return {"result": True}
 
 
-async def is_like_on_tweet_exists(session: AsyncSession, tweet_id: int, user_id: int) -> Like | None:
-    stmt = select(Like).where(Like.user_id == user_id, Like.tweet_id == tweet_id)
+async def is_like_on_tweet_exists(
+        session: AsyncSession,
+        tweet_id: int,
+        user_id: int,
+) -> Like | None:
+    stmt = select(Like).where(
+        Like.user_id == user_id,
+        Like.tweet_id == tweet_id,
+    )
     like_or_not_exists: Like | None = await session.scalar(stmt)
     return like_or_not_exists

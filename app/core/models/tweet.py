@@ -18,8 +18,14 @@ class Tweet(UserRelationMixin, Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     tweet_data: Mapped[str] = mapped_column(Text, nullable=False)
 
-    likes: Mapped[list["Like"]] = relationship(back_populates="tweet", cascade="all, delete-orphan")
-    medias: Mapped[list["Media"]] = relationship(back_populates="tweet", cascade="all, delete-orphan")
+    likes: Mapped[list["Like"]] = relationship(
+        back_populates="tweet",
+        cascade="all, delete-orphan",
+    )
+    medias: Mapped[list["Media"]] = relationship(
+        back_populates="tweet",
+        cascade="all, delete-orphan",
+    )
 
     def to_json(self):
         return {
