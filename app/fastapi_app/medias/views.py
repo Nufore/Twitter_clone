@@ -16,9 +16,9 @@ router = APIRouter(tags=["Medias"])
     description="Проверка расширения файла и загрузка изображений к твиту",
 )
 async def post_media(
-        file: UploadFile,
-        response: Response,
-        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    file: UploadFile,
+    response: Response,
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     file_data = FileSchema(
         filename=file.filename,

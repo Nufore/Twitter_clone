@@ -11,8 +11,8 @@ from . import crud
 
 
 async def tweet_by_id(
-        tweet_id: Annotated[int, Path],
-        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    tweet_id: Annotated[int, Path],
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> Tweet:
     """
     Получение данных твита по id
@@ -33,9 +33,9 @@ async def tweet_by_id(
 
 
 async def tweet_for_delete(
-        tweet_id: Annotated[int, Path],
-        api_key: Annotated[str, Header()],
-        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    tweet_id: Annotated[int, Path],
+    api_key: Annotated[str, Header()],
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> Tweet:
     """
     Получение данных твита для удаления по переданному API-ключу пользователя

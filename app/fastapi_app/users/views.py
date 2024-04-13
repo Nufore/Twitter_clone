@@ -19,10 +19,10 @@ router = APIRouter(tags=["Users"])
                 "и подписываемся на переданного по user_id",
 )
 async def follow_user(
-        response: Response,
-        user: User = Depends(user_by_apikey),
-        user_to_follow: User = Depends(user_by_id),
-        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    response: Response,
+    user: User = Depends(user_by_apikey),
+    user_to_follow: User = Depends(user_by_id),
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     res = await crud.follow_user(
         session=session,
@@ -43,9 +43,9 @@ async def follow_user(
                 "и убираем подписку с переданного по user_id",
 )
 async def unfollow_user(
-        user: User = Depends(user_by_apikey),
-        user_to_unfollow: User = Depends(user_by_id),
-        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    user: User = Depends(user_by_apikey),
+    user_to_unfollow: User = Depends(user_by_id),
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     return await crud.unfollow_user(
         session=session,
@@ -62,7 +62,7 @@ async def unfollow_user(
     description="Находим пользователя по предоставленному API-ключу",
 )
 async def get_user_me(
-        user: User = Depends(user_by_apikey),
+    user: User = Depends(user_by_apikey),
 ):
     return await crud.get_user_data(user=user)
 
@@ -75,6 +75,6 @@ async def get_user_me(
     description="Находим пользователя по предоставленному id",
 )
 async def get_user(
-        user: User = Depends(user_by_id),
+    user: User = Depends(user_by_id),
 ):
     return await crud.get_user_data(user=user)

@@ -9,8 +9,8 @@ from . import crud
 
 
 async def user_by_id(
-        user_id: Annotated[int, Path],
-        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    user_id: Annotated[int, Path],
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> User:
     """
     Получение данных пользователя по его id для зависимости во views
@@ -32,11 +32,12 @@ async def user_by_id(
 
 
 async def user_by_apikey(
-        api_key: Annotated[str, Header()],
-        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    api_key: Annotated[str, Header()],
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> User:
     """
-    Получение данных пользователя по переданному API-ключу для зависимости во views
+    Получение данных пользователя
+    по переданному API-ключу для зависимости во views
 
     :param api_key: API-ключ переданный в headers при запросе
     :param session: Асинхронная сессия

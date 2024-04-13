@@ -26,8 +26,8 @@ async def get_user(session: AsyncSession, user_id: int) -> User | None:
 
 
 async def get_user_by_api_key(
-        session: AsyncSession,
-        api_key: str,
+    session: AsyncSession,
+    api_key: str,
 ) -> User:
     """
     Получение пользователя(вместе с подписками и подписчиками)
@@ -54,8 +54,8 @@ async def get_user_by_api_key(
 
 
 def is_followed(
-        user: User,
-        user_to_follow: User,
+    user: User,
+    user_to_follow: User,
 ):
     """
     Проверка подписки одного пользователя на другого
@@ -73,9 +73,9 @@ def is_followed(
 
 
 async def follow_user(
-        session: AsyncSession,
-        user: User,
-        user_to_follow: User,
+    session: AsyncSession,
+    user: User,
+    user_to_follow: User,
 ):
     """
     Подписаться на пользователя,
@@ -95,9 +95,9 @@ async def follow_user(
 
 
 async def unfollow_user(
-        session: AsyncSession,
-        user: User,
-        user_to_unfollow: User,
+    session: AsyncSession,
+    user: User,
+    user_to_unfollow: User,
 ):
     """
     Убрать подписку на другого пользователя,

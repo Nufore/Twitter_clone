@@ -9,9 +9,9 @@ from .schemas import TweetCreate
 
 
 async def create_tweet(
-        session: AsyncSession,
-        tweet_in: TweetCreate,
-        user_id: int,
+    session: AsyncSession,
+    tweet_in: TweetCreate,
+    user_id: int,
 ):
     """
     Создание нового твита
@@ -109,7 +109,11 @@ async def delete_tweet(session: AsyncSession, tweet: Tweet) -> dict:
     return {"result": True}
 
 
-async def create_like(session: AsyncSession, tweet_id: int, user_id: int) -> dict:
+async def create_like(
+    session: AsyncSession,
+    tweet_id: int,
+    user_id: int,
+) -> dict:
     """
     Поставить отметку «Нравится» на твит,
     предварительно проверив наличие лайка
@@ -121,9 +125,9 @@ async def create_like(session: AsyncSession, tweet_id: int, user_id: int) -> dic
     :return: возвращаем результат выполнения
     """
     if await is_like_on_tweet_exists(
-            session=session,
-            tweet_id=tweet_id,
-            user_id=user_id,
+        session=session,
+        tweet_id=tweet_id,
+        user_id=user_id,
     ):
         return {"result": False}
     new_like = Like(user_id=user_id, tweet_id=tweet_id)
@@ -132,7 +136,11 @@ async def create_like(session: AsyncSession, tweet_id: int, user_id: int) -> dic
     return {"result": True}
 
 
-async def delete_like(session: AsyncSession, tweet_id: int, user_id: int) -> dict:
+async def delete_like(
+    session: AsyncSession,
+    tweet_id: int,
+    user_id: int,
+) -> dict:
     """
     Убрать отметку «Нравится» с твита,
     предварительно проверив наличие лайка
@@ -156,9 +164,9 @@ async def delete_like(session: AsyncSession, tweet_id: int, user_id: int) -> dic
 
 
 async def is_like_on_tweet_exists(
-        session: AsyncSession,
-        tweet_id: int,
-        user_id: int,
+    session: AsyncSession,
+    tweet_id: int,
+    user_id: int,
 ) -> Like | None:
     """
     Проверяем наличие лайка на твите от пользователя

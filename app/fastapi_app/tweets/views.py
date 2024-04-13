@@ -6,7 +6,7 @@ from app.core.models import Tweet, User, db_helper
 from ..users import dependencies as user_dependencies
 from . import crud
 from .dependencies import tweet_by_id, tweet_for_delete
-from .schemas import TweetCreate, ResponseTweets, ResponseActionTweet
+from .schemas import ResponseActionTweet, ResponseTweets, TweetCreate
 
 router = APIRouter(tags=["Tweets"])
 
@@ -18,9 +18,9 @@ router = APIRouter(tags=["Tweets"])
     description="Создаем твит под пользователем по переданному API-ключу",
 )
 async def create_tweet(
-        tweet_in: TweetCreate,
-        user: User = Depends(user_dependencies.user_by_apikey),
-        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    tweet_in: TweetCreate,
+    user: User = Depends(user_dependencies.user_by_apikey),
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     return await crud.create_tweet(
         session=session,
@@ -38,8 +38,8 @@ async def create_tweet(
                 "по переданному API-ключу",
 )
 async def get_tweets(
-        user: User = Depends(user_dependencies.user_by_apikey),
-        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    user: User = Depends(user_dependencies.user_by_apikey),
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     return await crud.get_tweets(session=session, user=user)
 
@@ -52,8 +52,8 @@ async def get_tweets(
     description="Удалить твит пользователя по переданному API-ключу",
 )
 async def delete_tweet(
-        tweet: Tweet = Depends(tweet_for_delete),
-        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    tweet: Tweet = Depends(tweet_for_delete),
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     return await crud.delete_tweet(session=session, tweet=tweet)
 
@@ -66,10 +66,10 @@ async def delete_tweet(
     description="Поставить отметку «Нравится» на твит",
 )
 async def create_like(
-        response: Response,
-        tweet: Tweet = Depends(tweet_by_id),
-        user: User = Depends(user_dependencies.user_by_apikey),
-        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    response: Response,
+    tweet: Tweet = Depends(tweet_by_id),
+    user: User = Depends(user_dependencies.user_by_apikey),
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     res = await crud.create_like(
         session=session,
@@ -89,10 +89,10 @@ async def create_like(
     description="Убрать отметку «Нравится» с твита",
 )
 async def delete_like(
-        response: Response,
-        tweet: Tweet = Depends(tweet_by_id),
-        user: User = Depends(user_dependencies.user_by_apikey),
-        session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+    response: Response,
+    tweet: Tweet = Depends(tweet_by_id),
+    user: User = Depends(user_dependencies.user_by_apikey),
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
     res = await crud.delete_like(
         session=session,

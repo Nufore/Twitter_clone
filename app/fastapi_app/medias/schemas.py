@@ -15,8 +15,8 @@ class FileSchema(BaseModel):
         :return: возвращаем словарь с результатом
         """
         if (
-                self.filename.rsplit(".", 1)[1] in settings.allowed_extensions
-                and "image" in self.content_type
+            self.filename.rsplit(".", 1)[1] in settings.allowed_extensions
+            and "image" in self.content_type
         ):
             return {"result": True}
 
