@@ -14,6 +14,14 @@ async def tweet_by_id(
         tweet_id: Annotated[int, Path],
         session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> Tweet:
+    """
+    Получение данных твита по id
+
+    :param tweet_id: id твита
+    :param session: Асинхронная сессия
+
+    :return: возвращаем твит или HTTPException что твит не найден
+    """
     tweet = await crud.get_tweet(session=session, tweet_id=tweet_id)
     if tweet:
         return tweet
@@ -29,6 +37,17 @@ async def tweet_for_delete(
         api_key: Annotated[str, Header()],
         session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> Tweet:
+    """
+    Получение данных твита для удаления по переданному API-ключу пользователя
+    и id твита
+
+    :param tweet_id: id твита
+    :param api_key: API-ключ пользователя
+    :param session: Асинхронная сессия
+
+    :return: возвращаем твит или HTTPException что твит не найден
+    / не принадлежит данному пользователю
+    """
     user: User = await user_crud.get_user_by_api_key(
         session=session,
         api_key=api_key,

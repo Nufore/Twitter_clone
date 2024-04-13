@@ -45,3 +45,6 @@ class User(Base):
 
     def id_name_to_json(self):
         return {"id": self.id, "name": self.name}
+
+    def user_id_name_to_json(self):
+        return {"user_id": self.id, "name": self.name}
