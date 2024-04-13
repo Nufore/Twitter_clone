@@ -1,13 +1,21 @@
+import os
 from pathlib import Path
 
+from dotenv import load_dotenv
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings
 
+load_dotenv()
 BASE_DIR = Path(__file__).parent.parent
+DB_USER = os.getenv("DB_USER")
+DB_PASS = os.getenv("DB_PASS")
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT")
+DB_NAME = os.getenv("DB_NAME")
 
 
 class DbSettings(BaseModel):
-    url: str = "postgresql+asyncpg://admin:admin@postgres:5432/t_clone_db"
+    url: str = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     echo: bool = False
 
 

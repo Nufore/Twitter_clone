@@ -13,6 +13,9 @@ COPY /fastapi_app /app/fastapi_app
 COPY /static /app/static
 
 
+COPY .env /app/.env
+
+
 RUN alembic init alembic
 COPY alembic.ini /app/alembic.ini
 COPY /alembic /app/alembic
