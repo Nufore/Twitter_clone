@@ -10,14 +10,29 @@ from app.core.config import settings
 from app.core.models import Media
 
 
-async def create_media(session: AsyncSession, path: str):
+async def create_media(session: AsyncSession, path: str) -> dict:
+    """
+    Функция записи данных по файлу в БД
+
+    :param session: Асинхронная сессия
+    :param path: путь до файла
+
+    :return: возвращаем словарь с результатом и id файла в БД
+    """
     new_media = Media(path=f"{settings.file_save_prefix}{path}")
     session.add(new_media)
     await session.commit()
     return {"result": True, "media_id": new_media.id}
 
 
-async def save_media_file(file: UploadFile):
+async def save_media_file(file: UploadFile) -> str:
+    """
+    Функция сохранения файла в хранилище
+
+    :param file: Данные по файлу
+
+    :return: возвращаем название файла после его сохранения
+    """
     filename = secure_filename(f"{time.time()}_{file.filename}")
     content = await file.read()
 

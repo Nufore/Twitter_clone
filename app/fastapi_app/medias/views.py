@@ -9,7 +9,12 @@ from .schemas import FileSchema
 router = APIRouter(tags=["Medias"])
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/",
+    status_code=status.HTTP_201_CREATED,
+    summary="Загрузка изображений к твиту",
+    description="Проверка расширения файла и загрузка изображений к твиту",
+)
 async def post_media(
         file: UploadFile,
         response: Response,

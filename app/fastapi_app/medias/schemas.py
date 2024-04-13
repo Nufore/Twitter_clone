@@ -8,6 +8,12 @@ class FileSchema(BaseModel):
     content_type: str
 
     def check_content_type(self) -> dict:
+        """
+        Проверяем, соответствует ли расширение файла
+        установленным значениям в конфиге
+
+        :return: возвращаем словарь с результатом
+        """
         if (
                 self.filename.rsplit(".", 1)[1] in settings.allowed_extensions
                 and "image" in self.content_type
