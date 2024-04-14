@@ -12,7 +12,7 @@ from app.core.models import Media
 
 async def create_media(session: AsyncSession, path: str) -> dict:
     """
-    Функция записи данных по файлу в БД
+    Функция записи данных по файлу в БД.
 
     :param session: Асинхронная сессия
     :param path: путь до файла
@@ -27,7 +27,7 @@ async def create_media(session: AsyncSession, path: str) -> dict:
 
 async def save_media_file(file: UploadFile) -> str:
     """
-    Функция сохранения файла в хранилище
+    Функция сохранения файла в хранилище.
 
     :param file: Данные по файлу
 
@@ -38,7 +38,7 @@ async def save_media_file(file: UploadFile) -> str:
 
     file_to_write = os.path.join(settings.static_image_dir, filename)
 
-    async with aiofiles.open(file_to_write, "wb") as f:
-        await f.write(content)
+    async with aiofiles.open(file_to_write, "wb") as fw:
+        await fw.write(content)
 
     return filename

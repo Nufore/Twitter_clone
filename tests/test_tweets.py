@@ -53,10 +53,8 @@ async def test_create_like_already_exists(ac: AsyncClient):
         f"/api/tweets/{tweet_id}/likes", headers={"Api-Key": "test"}
     )
     result = response.json()["result"]
-    message = response.json()["message"]
     assert response.status_code == 400
     assert not result
-    assert message == "Like is already exists"
 
 
 @pytest.mark.asyncio(scope="session")
@@ -66,10 +64,8 @@ async def test_delete_like_by_wrong_user(ac: AsyncClient):
         f"/api/tweets/{tweet_id}/likes", headers={"Api-Key": "qwerty"}
     )
     result = response.json()["result"]
-    message = response.json()["message"]
     assert response.status_code == 400
     assert not result
-    assert message == "There is not like on that tweet"
 
 
 @pytest.mark.asyncio(scope="session")

@@ -14,7 +14,7 @@ async def create_tweet(
     user_id: int,
 ):
     """
-    Создание нового твита
+    Создание нового твита.
 
     :param session: Асинхронная сессия
     :param tweet_in: Данные нового твита
@@ -39,7 +39,7 @@ async def create_tweet(
 
 async def get_tweet(session: AsyncSession, tweet_id: int) -> Tweet | None:
     """
-    Получение твита по переданному id
+    Получение твита по переданному id.
 
     :param session: Асинхронная сессия
     :param tweet_id: id твита
@@ -52,7 +52,7 @@ async def get_tweet(session: AsyncSession, tweet_id: int) -> Tweet | None:
 
 async def get_tweets(session: AsyncSession, user: User) -> dict | None:
     """
-    Получение ленты твитов
+    Получение ленты твитов.
 
     :param session: Асинхронная сессия
     :param user: Пользователь полученный по API-ключу в запросе
@@ -61,29 +61,29 @@ async def get_tweets(session: AsyncSession, user: User) -> dict | None:
     """
     if settings.upload_all_tweets:
         stmt = (
-            select(Tweet)
-            .options(
+            select(Tweet).
+            options(
                 selectinload(Tweet.likes).subqueryload(Like.user),
                 selectinload(Tweet.user),
                 selectinload(Tweet.medias),
-            )
-            .order_by(-Tweet.id)
+            ).
+            order_by(-Tweet.id)
         )
     else:
         stmt = (
-            select(Tweet)
-            .options(
+            select(Tweet).
+            options(
                 selectinload(Tweet.likes).subqueryload(Like.user),
                 selectinload(Tweet.user),
                 selectinload(Tweet.medias),
-            )
-            .filter(
+            ).
+            filter(
                 or_(
                     Tweet.user_id.in_(flwr.id for flwr in user.followed),
                     Tweet.user_id == user.id,
                 )
-            )
-            .order_by(-Tweet.id)
+            ).
+            order_by(-Tweet.id)
         )
     res = await session.scalars(stmt)
 
@@ -97,7 +97,7 @@ async def get_tweets(session: AsyncSession, user: User) -> dict | None:
 
 async def delete_tweet(session: AsyncSession, tweet: Tweet) -> dict:
     """
-    Удаление твита
+    Удаление твита.
 
     :param session: Асинхронная сессия
     :param tweet: Твит
@@ -116,7 +116,7 @@ async def create_like(
 ) -> dict:
     """
     Поставить отметку «Нравится» на твит,
-    предварительно проверив наличие лайка
+    предварительно проверив наличие лайка.
 
     :param session: Асинхронная сессия
     :param tweet_id: id твита
@@ -143,7 +143,7 @@ async def delete_like(
 ) -> dict:
     """
     Убрать отметку «Нравится» с твита,
-    предварительно проверив наличие лайка
+    предварительно проверив наличие лайка.
 
     :param session: Асинхронная сессия
     :param tweet_id: id твита
@@ -169,7 +169,7 @@ async def is_like_on_tweet_exists(
     user_id: int,
 ) -> Like | None:
     """
-    Проверяем наличие лайка на твите от пользователя
+    Проверяем наличие лайка на твите от пользователя.
 
     :param session: Асинхронная сессия
     :param tweet_id: id твита
@@ -181,5 +181,4 @@ async def is_like_on_tweet_exists(
         Like.user_id == user_id,
         Like.tweet_id == tweet_id,
     )
-    like_or_not_exists: Like | None = await session.scalar(stmt)
-    return like_or_not_exists
+    return await session.scalar(stmt)

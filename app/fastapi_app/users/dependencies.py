@@ -13,7 +13,7 @@ async def user_by_id(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> User:
     """
-    Получение данных пользователя по его id для зависимости во views
+    Получение данных пользователя по его id для зависимости во views.
 
     :param user_id: id пользователя
     :param session: Асинхронная сессия
@@ -37,7 +37,7 @@ async def user_by_apikey(
 ) -> User:
     """
     Получение данных пользователя
-    по переданному API-ключу для зависимости во views
+    по переданному API-ключу для зависимости во views.
 
     :param api_key: API-ключ переданный в headers при запросе
     :param session: Асинхронная сессия

@@ -28,6 +28,6 @@ async def post_media(
     if result["result"]:
         filename = await crud.save_media_file(file=file)
         return await crud.create_media(session=session, path=filename)
-    else:
-        response.status_code = status.HTTP_400_BAD_REQUEST
-        return result
+
+    response.status_code = status.HTTP_400_BAD_REQUEST
+    return result

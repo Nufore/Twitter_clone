@@ -15,11 +15,17 @@ DB_NAME = os.getenv("DB_NAME")
 
 
 class DbSettings(BaseModel):
+    """
+    Подключение к БД
+    """
     url: str = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     echo: bool = False
 
 
 class Settings(BaseSettings):
+    """
+    Конфиг для API
+    """
     api_prefix: str = "/api"
 
     db: DbSettings = DbSettings()

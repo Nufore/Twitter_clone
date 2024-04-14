@@ -15,7 +15,7 @@ async def tweet_by_id(
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ) -> Tweet:
     """
-    Получение данных твита по id
+    Получение данных твита по id.
 
     :param tweet_id: id твита
     :param session: Асинхронная сессия
@@ -39,7 +39,7 @@ async def tweet_for_delete(
 ) -> Tweet:
     """
     Получение данных твита для удаления по переданному API-ключу пользователя
-    и id твита
+    и id твита.
 
     :param tweet_id: id твита
     :param api_key: API-ключ пользователя
