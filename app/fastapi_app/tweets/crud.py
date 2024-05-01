@@ -6,12 +6,13 @@ from app.core.config import settings
 from app.core.models import Like, Media, Tweet, User
 
 from .schemas import TweetCreate
+from ..medias.crud import delete_files
 
 
 async def create_tweet(
-    session: AsyncSession,
-    tweet_in: TweetCreate,
-    user_id: int,
+        session: AsyncSession,
+        tweet_in: TweetCreate,
+        user_id: int,
 ):
     """
     Создание нового твита.
@@ -104,15 +105,18 @@ async def delete_tweet(session: AsyncSession, tweet: Tweet) -> dict:
 
     :return: возвращаем результат удаления
     """
-    await session.delete(tweet)
-    await session.commit()
-    return {"result": True}
+    if await delete_files(session=session, tweet_id=tweet.id):
+        await session.delete(tweet)
+        await session.commit()
+        return {"result": True}
+
+    return {"result": False}
 
 
 async def create_like(
-    session: AsyncSession,
-    tweet_id: int,
-    user_id: int,
+        session: AsyncSession,
+        tweet_id: int,
+        user_id: int,
 ) -> dict:
     """
     Поставить отметку «Нравится» на твит,
@@ -125,9 +129,9 @@ async def create_like(
     :return: возвращаем результат выполнения
     """
     if await is_like_on_tweet_exists(
-        session=session,
-        tweet_id=tweet_id,
-        user_id=user_id,
+            session=session,
+            tweet_id=tweet_id,
+            user_id=user_id,
     ):
         return {"result": False}
     new_like = Like(user_id=user_id, tweet_id=tweet_id)
@@ -137,9 +141,9 @@ async def create_like(
 
 
 async def delete_like(
-    session: AsyncSession,
-    tweet_id: int,
-    user_id: int,
+        session: AsyncSession,
+        tweet_id: int,
+        user_id: int,
 ) -> dict:
     """
     Убрать отметку «Нравится» с твита,
@@ -164,9 +168,9 @@ async def delete_like(
 
 
 async def is_like_on_tweet_exists(
-    session: AsyncSession,
-    tweet_id: int,
-    user_id: int,
+        session: AsyncSession,
+        tweet_id: int,
+        user_id: int,
 ) -> Like | None:
     """
     Проверяем наличие лайка на твите от пользователя.

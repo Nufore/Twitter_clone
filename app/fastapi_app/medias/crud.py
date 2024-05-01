@@ -1,8 +1,10 @@
 import os
 import time
+from pathlib import Path
 
 import aiofiles
 from fastapi import UploadFile
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from werkzeug.utils import secure_filename
 
@@ -42,3 +44,21 @@ async def save_media_file(file: UploadFile) -> str:
         await fw.write(content)
 
     return filename
+
+
+async def delete_files(session: AsyncSession, tweet_id: int) -> bool:
+    stmt = select(Media).where(Media.tweet_id == tweet_id)
+    res = await session.scalars(stmt)
+    files = res.all()
+
+    for file in files:
+        try:
+            path_app = os.path.join('/app')
+            path_image = os.path.join(file.path)
+            file_to_remove = path_app + path_image
+            os.remove(file_to_remove)
+        except FileNotFoundError as e:
+            print(e)
+            return False
+
+    return True
